@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>class-management</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+        }
+        #sidebar{
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 8%;
+            background-color: rgb(106, 101, 101);
+        }
+        #h2{
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            height: 100%;    
+        }
+        .nav{
+            text-align: center;
+            font-size: 1.25em;
+            border: 2px solid rgb(155, 151, 151);
+            border-radius: 10px;
+        }
+        .nav:hover{
+            background-color: rgb(155, 151, 151);
+        }
+        .nav a{
+            text-decoration: none;
+            color: white;
+        }
+        #right{
+            margin-left: 8%;
+            height: 100vh;
+            width: 92%;
+        }
+        .schedule{
+            margin-top: 2%;
+            background-color: rgb(179, 227, 184);
+            height: 8%;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            border: 2px solid black;
+            padding: 20px;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <div id="sidebar">
+        <div id="h2">
+            <div class="nav"><a href="class-activity.html">日常活动</a></div>
+            <div class="nav"><a href="class-forum.html">班级论坛</a></div>
+            <div class="nav"><a href="class-member.html">班级成员</a></div>
+            <div class="nav"><a href="class-team.html">组队申请</a></div>
+        </div>
+    </div>
+
+    <div id="right">
+        <div style="background-color:rgb(29, 103, 214);height: 12%;position: relative;">
+            <button id="addButton" style="border-radius: 45px;width:20px; height: 20px;display: flex;
+            justify-content: center;
+            align-items: center;">+</button>
+            <div style="position: absolute;top: 50%;left: 50%;transform: translate(-50%,-50%);font-size: larger;">日程安排</div>
+        </div>
+        <!-- <div class="schedule">************************************* 1-1</div> -->
+    </div>
+
+    <div class="modal" id="myModal">
+        <h2>编辑日志</h2>
+        <textarea id="scheduleInput" rows="4" cols="50"></textarea>
+        <br>
+        <button id="saveButton">保存</button>
+        <button id="cancelButton">取消</button>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var addButton = document.getElementById('addButton');
+            var modal = document.getElementById('myModal');
+            var saveButton = document.getElementById('saveButton');
+            var cancelButton = document.getElementById('cancelButton');
+            var right = document.getElementById("right");
+            var schedules = JSON.parse(localStorage.getItem('schedules'));
+            if (!Array.isArray(schedules)) {
+                schedules = []; 
+            }
+            
+            function addSchedule(newScheduleText){
+                var newDiv = document.createElement("div");
+                newDiv.className = "schedule";
+                newDiv.textContent = newScheduleText;
+                right.appendChild(newDiv);
+            }   
+            function saveSchedules() {
+                localStorage.setItem('schedules', JSON.stringify(schedules));
+            }
+            function loadSchedules(){
+                schedules.forEach(function(scheduleText){
+                    addSchedule(scheduleText);
+                })
+            }
+
+            addButton.addEventListener("click", function() {
+                modal.style.display = 'block';
+            });
+
+            saveButton.addEventListener("click", function() {
+                var newScheduleText = document.getElementById('scheduleInput').value;
+                schedules.push(newScheduleText);
+                addSchedule(newScheduleText);
+                saveSchedules();
+
+                modal.style.display = 'none';
+                document.getElementById('scheduleInput').value = '';//清空
+            });
+
+            cancelButton.addEventListener("click", function() {
+                modal.style.display = 'none';
+                document.getElementById('scheduleInput').value = '';
+            });
+            // localStorage.clear()
+            loadSchedules();
+        });
+    </script>
+</body>
+</html>
+
+
+
+<!-- 存储机制：
+localStorage使用键值对（key-value）的形式存储数据。
+存储的数据会保留在用户的浏览器中，直到用户手动清除或网站调用localStorage.removeItem(key)来删除数据。
+数据类型：
+localStorage只能存储字符串类型的数据。如果存储其他类型的数据（如对象、数组等），需要先进行序列化（如使用JSON.stringify()），取出数据时再进行反序列化（如使用JSON.parse()）。
+使用方法：
+localStorage.setItem(key, value)：设置指定键的值。
+localStorage.getItem(key)：获取指定键的值。
+localStorage.removeItem(key)：删除指定键的值。
+localStorage.clear()：清空所有存储的数据。 -->
